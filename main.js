@@ -140,12 +140,26 @@ const neoon = new THREE.MeshStandardMaterial({ emissive: 0xFFEA00, emissiveInten
 const material34 = new THREE.MeshStandardMaterial({ emissive: 0xffff00, emissiveIntensity: 1, metalness: 0.5, transparent: true, opacity: 0.8 });
 
 //////////////////// PUNTERO (CENTRO DE PANTALLA VR) ////////////////////
-const pointerGeometry = new THREE.SphereGeometry(0.02, 16, 16); // pequeño punto
-const pointerMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff }); // azul
+const pointerGeometry = new THREE.SphereGeometry(0.02, 16, 16);
+const pointerMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff });
 const pointer = new THREE.Mesh(pointerGeometry, pointerMaterial);
-camera.add(pointer); // agregarlo a la cámara
-pointer.position.set(0, 0, -2); // 2 metros enfrente de la cámara
-scene.add(camera);
+pointer.position.set(0, 0, -2);
+
+// Añadimos el puntero a un grupo que estará delante del usuario VR
+const vrPointerGroup = new THREE.Group();
+vrPointerGroup.add(pointer);
+scene.add(vrPointerGroup);
+
+// Sincronizar la posición del puntero con la cámara en cada frame
+function updatePointer() {
+  const cameraWorldPos = new THREE.Vector3();
+  const cameraWorldQuat = new THREE.Quaternion();
+  camera.getWorldPosition(cameraWorldPos);
+  camera.getWorldQuaternion(cameraWorldQuat);
+
+  vrPointerGroup.position.copy(cameraWorldPos);
+  vrPointerGroup.quaternion.copy(cameraWorldQuat);
+}
 
 
 //ESCENA////////////////////////////
@@ -282,6 +296,7 @@ function animate() {
   luna.position.z = cube7.position.z + 1.5 * Math.sin(t2*2) ;
 
    updateCharacterMovement();
+    updatePointer();
 
   renderer.render( scene, camera );
 
