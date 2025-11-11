@@ -54,7 +54,7 @@ let verticalSpeed = 0;
 const character = new THREE.Object3D();
 scene.add(character);
 character.add(camera);
-camera.position.set(0, 1.6, 0); // altura de la vista del jugador
+camera.position.set(0, 5.6, 0); // altura de la vista del jugador
 
 window.addEventListener("gamepadconnected", (event) => {
   console.log("Controlador conectado:", event.gamepad.id);
@@ -242,4 +242,5 @@ function animate() {
 
 
 }
+
 
