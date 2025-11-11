@@ -229,7 +229,7 @@ scene.add( letreros3 );
 letreros3.position.set( 0, 40, 0);
 
 camera.position.z = 8;
-camera.position.y = 9;
+camera.position.y = 19;
 
 function animate() {
   t2 += 0.008;
@@ -239,5 +239,6 @@ function animate() {
    updateCharacterMovement();
 
   renderer.render( scene, camera );
+
 
 }
