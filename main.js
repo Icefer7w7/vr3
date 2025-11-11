@@ -66,34 +66,27 @@ function updateCharacterMovement() {
     const gp = gamepads[0];
     const leftStickY = gp.axes[1];
 
-    if (leftStickY > 0.1) {
-      moveForward = false;
-      moveBackward = true;
-    } else if (leftStickY < -0.1) {
-      moveBackward = false;
-      moveForward = true;
-    } else {
-      moveForward = false;
-      moveBackward = false;
-    }
+    moveForward = leftStickY < -0.1;
+    moveBackward = leftStickY > 0.1;
   }
 
   const direction = new THREE.Vector3();
   camera.getWorldDirection(direction);
 
-  // Movimiento según dirección de la cámara
   if (moveForward) character.position.addScaledVector(direction, speed);
   if (moveBackward) character.position.addScaledVector(direction, -speed);
 
-  // Gravedad simple
-  if (character.position.y > 0) {
-    verticalSpeed -= gravity;
-  } else {
-    verticalSpeed = 0;
-    character.position.y = 0;
-  }
+  // Solo aplicar gravedad si NO está en VR
+  if (!renderer.xr.isPresenting) {
+    if (character.position.y > 0) {
+      verticalSpeed -= gravity;
+    } else {
+      verticalSpeed = 0;
+      character.position.y = 0;
+    }
 
-  character.position.y += verticalSpeed;
+    character.position.y = 5.6; // fuera de VR, mantener altura
+  }
 }
 
 ///////TEXTURA////////
@@ -242,5 +235,6 @@ function animate() {
 
 
 }
+
 
 
