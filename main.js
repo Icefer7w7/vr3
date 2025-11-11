@@ -81,6 +81,51 @@ function updateCharacterMovement() {
     character.position.y = 5.6; // fuera de VR, mantener altura
   }
 
+////////////////PUNTERO////////////////////////
+const crosshair = document.createElement('div');
+crosshair.style.position = 'absolute';
+crosshair.style.top = '50%';
+crosshair.style.left = '50%';
+crosshair.style.transform = 'translate(-50%, -50%)';
+crosshair.style.width = '10px';
+crosshair.style.height = '10px';
+crosshair.style.border = '2px solid white';
+crosshair.style.borderRadius = '50%';
+crosshair.style.pointerEvents = 'none';
+crosshair.style.zIndex = '10';
+document.body.appendChild(crosshair);
+
+//detectar objeto
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2(0, 0); // centro de la pantalla
+let rodrigo; // guardaremos el modelo aquí
+
+let mirandoARodrigo = false;
+
+function checkSight() {
+  raycaster.setFromCamera(mouse, camera);
+  if (rodrigo) {
+    const intersects = raycaster.intersectObject(rodrigo, true);
+    mirandoARodrigo = intersects.length > 0;
+    if (mirandoARodrigo) {
+      crosshair.style.borderColor = 'red'; // cambia color si mira a Rodrigo
+    } else {
+      crosshair.style.borderColor = 'white';
+    }
+  }
+}
+
+// === ELIMINAR RODRIGO AL PRESIONAR "B" ===
+window.addEventListener('keydown', (e) => {
+  if (e.key.toLowerCase() === 'b' && mirandoARodrigo && rodrigo) {
+    scene.remove(rodrigo);
+    rodrigo = null;
+    crosshair.style.borderColor = 'white';
+    console.log("Rodrigo eliminado 👋");
+  }
+});
+
 
 ///////TEXTURA////////
 
@@ -148,6 +193,8 @@ loaderFbx.load("Rodrigo.fbx", function(object1){
 
     object1.position.set(0,0,0)
     object1.rotation.y = -1.5;
+    rodrigo = object1;
+
         scene.add(object1)
 })
 loaderFbx.load("ruleta.fbx", function(object1){
@@ -223,8 +270,8 @@ function animate() {
   luna.position.z = cube7.position.z + 1.5 * Math.sin(t2*2) ;
 
    updateCharacterMovement();
+   checkSight();
 
   renderer.render( scene, camera );
 
 }
-
