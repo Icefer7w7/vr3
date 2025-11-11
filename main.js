@@ -94,6 +94,8 @@ const enemy = new THREE.Mesh(enemyGeometry, enemyMaterial);
 enemy.position.set(0, 1, -5);
 scene.add(enemy);
 
+let rodrigo = null; 
+
 function shootRay() {
   // Origen del disparo
   const origin = new THREE.Vector3();
@@ -113,21 +115,16 @@ function shootRay() {
     // Vibración del control
     if (navigator.vibrate) navigator.vibrate(200);
   }
+    if (rodrigo) {
+    const intersectsRodrigo = raycaster.intersectObject(rodrigo, true); // true = revisa submeshes
+    if (intersectsRodrigo.length > 0) {
+      console.log("¡Rodrigo alcanzado!");
+      scene.remove(rodrigo); // Eliminar modelo
+      rodrigo = null;
+      if (navigator.vibrate) navigator.vibrate(200);
+    }
+  }
 }
-
-//////////////////////// CROSSHAIR ////////////////////////
-const crosshair = document.createElement('div');
-crosshair.style.position = 'absolute';
-crosshair.style.top = '50%';
-crosshair.style.left = '50%';
-crosshair.style.transform = 'translate(-50%, -50%)';
-crosshair.style.width = '10px';
-crosshair.style.height = '10px';
-crosshair.style.border = '2px solid white';
-crosshair.style.borderRadius = '50%';
-crosshair.style.pointerEvents = 'none';
-crosshair.style.zIndex = '10';
-document.body.appendChild(crosshair);
 
 //////////////////////// GAMEPAD ////////////////////////
 window.addEventListener("gamepadconnected", (event) => {
@@ -197,6 +194,7 @@ loaderFbx.load("Rodrigo.fbx", function(object1){
     object1.scale.x=0.01;
     object1.scale.y=0.01;
     object1.scale.z=0.01;
+     rodrigo = object1;
 
     object1.position.set(0,0,0)
     object1.rotation.y = -1.5;
