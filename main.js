@@ -35,7 +35,7 @@ const textureCube = loader.load( [
 	'pz.png', 'nz.png'
 ] );
 scene.background = textureCube
-//CAMARA////////////////////
+//CAMARA y controles///////////////////
 
 const manager = new THREE.LoadingManager();
 const loaderFbx = new FBXLoader( manager );
@@ -44,9 +44,57 @@ const controls = new OrbitControls( camera, renderer.domElement );
 				controls.target.set( 0, 0, 0 );
 				controls.update();
 
-const user = new THREE.Group();
-user.add(camera);
-scene.add(user);
+let gamepad;
+let moveForward = false;
+let moveBackward = false;
+const speed = 0.1;
+const gravity = 0.01;
+let verticalSpeed = 0;
+
+const character = new THREE.Object3D();
+scene.add(character);
+character.add(camera);
+camera.position.set(0, 1.6, 0); // altura de la vista del jugador
+
+window.addEventListener("gamepadconnected", (event) => {
+  console.log("Controlador conectado:", event.gamepad.id);
+});
+
+function updateCharacterMovement() {
+  const gamepads = navigator.getGamepads();
+  if (gamepads[0]) {
+    const gp = gamepads[0];
+    const leftStickY = gp.axes[1];
+
+    if (leftStickY > 0.1) {
+      moveForward = false;
+      moveBackward = true;
+    } else if (leftStickY < -0.1) {
+      moveBackward = false;
+      moveForward = true;
+    } else {
+      moveForward = false;
+      moveBackward = false;
+    }
+  }
+
+  const direction = new THREE.Vector3();
+  camera.getWorldDirection(direction);
+
+  // Movimiento según dirección de la cámara
+  if (moveForward) character.position.addScaledVector(direction, speed);
+  if (moveBackward) character.position.addScaledVector(direction, -speed);
+
+  // Gravedad simple
+  if (character.position.y > 0) {
+    verticalSpeed -= gravity;
+  } else {
+    verticalSpeed = 0;
+    character.position.y = 0;
+  }
+
+  character.position.y += verticalSpeed;
+}
 
 ///////TEXTURA////////
 
@@ -57,10 +105,6 @@ const neoon = new THREE.MeshStandardMaterial({ emissive: 0xFFEA00, emissiveInten
 const material34 = new THREE.MeshStandardMaterial({ emissive: 0xffff00, emissiveIntensity: 1, metalness: 0.5, transparent: true, opacity: 0.8 });
 
 //ESCENA////////////////////////////
-const controller1 = renderer.xr.getController(0);
-const controller2 = renderer.xr.getController(1);
-scene.add(controller1);
-scene.add(controller2);
 
 const Piso = new THREE.BoxGeometry( 70, 0.2, 50 );
 const cube1 = new THREE.Mesh( Piso, alfombra);
@@ -191,39 +235,8 @@ function animate() {
   t2 += 0.008;
   luna.position.x = cube7.position.x + 1.5 * Math.cos(t2*2) ;
   luna.position.z = cube7.position.z + 1.5 * Math.sin(t2*2) ;
-  
-    t2 += 0.008;
-  luna.position.x = cube7.position.x + 1.5 * Math.cos(t2 * 2);
-  luna.position.z = cube7.position.z + 1.5 * Math.sin(t2 * 2);
 
-  // === Movimiento con joystick VR ===
-  const session = renderer.xr.getSession();
-  if (session) {
-    const inputSources = session.inputSources;
-    for (const source of inputSources) {
-      if (source.gamepad) {
-        const gp = source.gamepad;
-        const axes = gp.axes; // [x, y] del joystick
-        const [x, y] = axes;
-
-        // Mover el usuario según la dirección del joystick
-        const speed = 0.05;
-        const direction = new THREE.Vector3();
-
-        // Dirección basada en la rotación actual de la cámara
-        camera.getWorldDirection(direction);
-        direction.y = 0; // evitar subir o bajar
-
-        // Mover hacia adelante/atrás
-        user.position.addScaledVector(direction, -y * speed);
-
-        // Mover hacia los lados (perpendicular)
-        const right = new THREE.Vector3();
-        right.crossVectors(direction, camera.up).normalize();
-        user.position.addScaledVector(right, x * speed);
-      }
-    }
-  }
+   updateCharacterMovement();
 
   renderer.render( scene, camera );
 
