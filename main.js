@@ -139,6 +139,15 @@ const alfombra = new THREE.MeshPhongMaterial( { map:madera} );
 const neoon = new THREE.MeshStandardMaterial({ emissive: 0xFFEA00, emissiveIntensity: 1.3, metalness: 0});
 const material34 = new THREE.MeshStandardMaterial({ emissive: 0xffff00, emissiveIntensity: 1, metalness: 0.5, transparent: true, opacity: 0.8 });
 
+//////////////////// PUNTERO (CENTRO DE PANTALLA VR) ////////////////////
+const pointerGeometry = new THREE.SphereGeometry(0.02, 16, 16); // pequeño punto
+const pointerMaterial = new THREE.MeshBasicMaterial({ color: 0x0000ff }); // azul
+const pointer = new THREE.Mesh(pointerGeometry, pointerMaterial);
+camera.add(pointer); // agregarlo a la cámara
+pointer.position.set(0, 0, -2); // 2 metros enfrente de la cámara
+scene.add(camera);
+
+
 //ESCENA////////////////////////////
 
 const Piso = new THREE.BoxGeometry( 70, 0.2, 50 );
