@@ -20,7 +20,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				renderer.setAnimationLoop( animate );
 				renderer.xr.enabled = true;
-				renderer.xr.setReferenceSpaceType( 'local' );
+				renderer.xr.setReferenceSpaceType('local-floor');
 				
 
 				document.body.appendChild( VRButton.createButton( renderer ) );
@@ -242,3 +242,4 @@ function animate() {
 
 
 }
+
