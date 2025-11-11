@@ -47,7 +47,7 @@ const controls = new OrbitControls( camera, renderer.domElement );
 let gamepad;
 let moveForward = false;
 let moveBackward = false;
-const speed = 0.1;
+const speed = 0.3;
 const gravity = 0.01;
 let verticalSpeed = 0;
 
@@ -227,3 +227,4 @@ function animate() {
   renderer.render( scene, camera );
 
 }
+
