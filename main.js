@@ -20,7 +20,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				renderer.setAnimationLoop( animate );
 				renderer.xr.enabled = true;
-				renderer.xr.setReferenceSpaceType('local-floor');
+				renderer.xr.setReferenceSpaceType( 'local-floor' );
 				
 
 				document.body.appendChild( VRButton.createButton( renderer ) );
@@ -54,7 +54,7 @@ let verticalSpeed = 0;
 const character = new THREE.Object3D();
 scene.add(character);
 character.add(camera);
-camera.position.set(0, 5.6, 0); // altura de la vista del jugador
+camera.position.set(0, 5.6, 0); 
 
 window.addEventListener("gamepadconnected", (event) => {
   console.log("Controlador conectado:", event.gamepad.id);
@@ -76,18 +76,11 @@ function updateCharacterMovement() {
   if (moveForward) character.position.addScaledVector(direction, speed);
   if (moveBackward) character.position.addScaledVector(direction, -speed);
 
-  // Solo aplicar gravedad si NO está en VR
-  if (!renderer.xr.isPresenting) {
-    if (character.position.y > 0) {
-      verticalSpeed -= gravity;
-    } else {
-      verticalSpeed = 0;
-      character.position.y = 0;
-    }
+
 
     character.position.y = 5.6; // fuera de VR, mantener altura
   }
-}
+
 
 ///////TEXTURA////////
 
@@ -233,8 +226,4 @@ function animate() {
 
   renderer.render( scene, camera );
 
-
 }
-
-
-
